@@ -24,6 +24,7 @@
 <!ENTITY rfc0897 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.0897.xml">
 <!ENTITY rfc6324 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6324.xml">
 <!ENTITY rfc2827 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2827.xml">
+<!ENTITY rfc4632 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4632.xml">
 <!ENTITY rfc4953 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4953.xml">
 <!ENTITY rfc5961 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5961.xml">
 <!ENTITY rfc6056 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6056.xml">
@@ -166,7 +167,7 @@
       <t>This document specifies the &ldquo;Mapping of Address and Port&rdquo;
       double stateless NAT64 translation based solution (MAP-T) for providing
       shared or uniquely addressed IPv4 device connectivity to and across an
-      IPv6 domain. </t>
+      IPv6 domain.</t>
     </abstract>
   </front>
 
@@ -202,7 +203,7 @@
       required for environments where the IP encapsulation overhead or IPv6
       traffic interaction &amp; processing (eg use of IPv6 only servers)
       requirements, or both, make the use of the encapsulation solution not
-      attractive. </t>
+      attractive.</t>
 
       <t>A companion draft defines the DHCPv6 options for provisioning of MAP
       <xref target="I-D.mdt-softwire-map-dhcp-option"></xref>, applicable to
@@ -650,7 +651,7 @@ O---.--------------O          address)
         meaning that also the PSID is provisioned using e.g. The DHCP
         option.</t>
 
-        <t>See <xref target="appendixA"></xref> for an example of the Basic
+        <t>See <xref target="appendix_a"></xref> for an example of the Basic
         Mapping Rule.</t>
       </section>
 
@@ -691,7 +692,7 @@ O---.--------------O          address)
 ]]></artwork>
           </figure></t>
 
-        <t>See <xref target="appendixA"></xref> for an example of the
+        <t>See <xref target="appendix_a"></xref> for an example of the
         Forwarding Mapping Rule.</t>
       </section>
 
@@ -1191,6 +1192,8 @@ O---.--------------O          address)
 
       &rfc2827;
 
+      &rfc4632;
+
       &rfc4953;
 
       &rfc5961;
@@ -1204,7 +1207,7 @@ O---.--------------O          address)
       &I-D.dec-stateless-4v6;
     </references>
 
-    <section title="Examples of MAP-T translation">
+    <section anchor="appendix_a" title="Examples of MAP-T translation">
       <t><figure>
           <preamble>Example 1 - BMR:</preamble>
 
