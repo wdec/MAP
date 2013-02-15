@@ -701,8 +701,6 @@ O---.--------------O          address)
         of the BR IPv6 prefix that MAP-T CEs will use to form IPv6 addresses
         out of IPv4 destination addresses.</t>
 
-        <t></t>
-
         <t><figure title="Example: Default Mapping Rule">
             <artwork align="left"><![CDATA[
  Default Mapping Rule:     
@@ -716,19 +714,6 @@ O---.--------------O          address)
         IPv4 address and the BR prefix are shifted and "bit spread" across the
         fixed u-octet boundary as per <xref target="RFC6052"></xref>. All
         trailing bits after the IPv4 address are set to 0x0.</t>
-
-        <t><figure anchor="interfaceid3-fig" title="IPv6-IPv4 Mapped Address">
-            <preamble></preamble>
-
-            <artwork><![CDATA[                 
-
-<---- BR Prefix Length----->< 8 ><----- 32 -----><--- 24 --->
-+--------------------------+----+---------------+-----------+
-|      BR IPv6 prefix      | u  | IPv4 address  |     0     |
-+--------------------------+----+---------------+-----------+
-
-]]></artwork>
-          </figure></t>
       </section>
 
       <section anchor="interface-id" title="The IPv6 Interface Identifier">
@@ -744,7 +729,7 @@ O---.--------------O          address)
 | 16 bits|    32 bits     | 16 bits|
 +--------+----------------+--------+
 |   0    |  IPv4 address  |  PSID  |
-+--------+----+-----------+--------+
++--------+----------------+--------+
  
 ]]></artwork>
           </figure></t>
