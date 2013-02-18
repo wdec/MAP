@@ -666,7 +666,7 @@ TODO: Reflect example in section 5.4 of MAP draft
       specific rules to a specific CEs is outside of scope of this
       document.</t> -->
 
-      <t>The server MUST be capable of following per client assignment rules
+      <t>The server SHOULD be capable of following per client assignment rules
       when assigning MAP options.</t>
     </section>
 
