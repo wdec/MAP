@@ -289,13 +289,16 @@
     <!--                    -->
 
     <section title="Architecture">
-      <t>Figure 1 depicts the overall MAP-T architecture with two IPv4 users,
-      N and M respectively, connected by means of two MAP-T CEs to an IPv6
-      network that is equipped with one or more MAP-T BR. The CEs and BRs form
-      the MAP-T Domain.</t>
+      <t>Figure 1 depicts the overall MAP-T architecture, which sees any
+      number of IPv4 users (N and M used as examples), connected by means of
+      MAP-T CEs to an IPv6 network that is equipped with one or more MAP-T BR.
+      The CEs and BRs form the MAP-T Domain, by means of configuration that
+      they share.</t>
 
       <t>Functionally the MAP-T CE and BR utilize and extend some well
-      established technical building blocks as follows:</t>
+      established technical building blocks to allow the IPv4 users to
+      correspond with nodes on the Public IPv4 network, or IPv6 network as
+      follows:</t>
 
       <t><list style="symbols">
           <t>A regular (NAT44) NAPT <xref target="RFC2663"></xref> function on
@@ -331,7 +334,7 @@ O------------------O  \              /   O---------O \             /
 |    MAP-T CE      |   ;".         ,-'                `-.       ,-'
 | +-----+--------+ | ,"   `----+--'                      ------'
 | NAPT44|  MAP-T | |,          |
-| +-----+        | |        IPv6 Server(s)
+| +-----+        | |        IPv6 node(s)
 |   |   +--------+ |         (w/ v4 mapped
 O---.--------------O          address)
     |
@@ -341,34 +344,36 @@ O---.--------------O          address)
         ]]></artwork>
         </figure></t>
 
-      <t>Viewed from the CE, each MAP-T CE is configured by means of MAP
-      procedures with an IPv4 address and port-range, and is responsible for
-      translating a given users' private IPv4 space to the configured IPv4
-      address. The resulting traffic is translated by the CE, into the IPv6
-      network using stateless NAT64. In accordance with the MAP Rules The MAP
-      mechanism can operate with CE's using a shared IPv4 address, full IPv4
-      addresses or IPv4 prefixes.</t>
+      <t>Each MAP-T CE is configured by means of MAP procedures with an IPv4
+      address and port-range, and is responsible for translating between a
+      given users' private IPv4 space and the CE's MAP derived IPv4 address,
+      as well as adapting traffic between IPv4 and IPv6 using NAT64 procedures
+      that are in accordance with the MAP Rules applicable for a given domain.
+      The MAP procedures can operate with CE's using a shared IPv4 address,
+      full IPv4 addresses or IPv4 prefixes, and place no assumption on the
+      IPv6 addressing, other than an IPv6 prefix of adequate size being
+      allocated.</t>
 
       <t>The MAP-T BR is responsible for connecting one or more MAP-T domains
       to external IPv4 networks, using stateless NAT64 as extended by the MAP
       rules in this document, to relay traffic between the two.</t>
 
-      <t>As a byproduct of the use of NAT64, any IPv4-only nodes attached to
-      the MAP-T domain can correspond directly with any IPv6-only nodes that
-      have an IPv4 mapped IPv6 address formed out of the prefix assigned to
-      the MAP-T domain (as per <xref target="RFC6052"></xref>). Such IPv6
-      nodes (e.g. an HTTP server, or a web content cache device) are thus able
-      to serve all users alike utilizing IPv6. An optional (not shown) DNS64
-      <xref target="RFC6147"></xref> component would be required if the said
-      IPv6-only devices are expected to themselves to initiate communication
-      to IPv4-only entities outside of the domain.</t>
+      <t>The intended role for NAT64 technology in the architecture is two
+      fold. Firstly, it is intended to allow the IPv6 network to focus on IPv6
+      operational procedures with minimal consideration of IPv4-only nodes
+      attached to the domain. Secondly, it is intended to allow IPv4-only
+      nodes to correspond directly with IPv6-only nodes, provided they have an
+      IPv4 mapped IPv6 address belonging to the IPv6 prefix assigned to the
+      MAP-T domain (as per <xref target="RFC6052"></xref>).</t>
 
-      <t>The operation of the above functions is governed by means of Mapping
-      Rules covered in Section 5. Section 6 describes how the functions are
-      used in packet forwarding operations.</t>
+      <t>The detailed operation of the above mechanism is governed by means of
+      MAP Rules and an address+port mapping algorithm covered in <xref
+      target="mapping-rules"></xref>. <xref target="forwarding"></xref>
+      describes how the mechanism is used for packet forwarding
+      operations.</t>
     </section>
 
-    <section title="Mapping Rules">
+    <section anchor="mapping-rules" title="Mapping Rules">
       <t>A MAP node is provisioned with one or more mapping rules that govern
       the way an IPv4 address and port are mapped between the IPv4 and IPv6
       domains, as well specific or default forwarding behaviour. Three
@@ -432,8 +437,8 @@ O---.--------------O          address)
       rules, and all traffic is forwarded from the CE to the BR by means of
       the DMR.</t>
 
-      <t>The following subsections specify the MAP algorithm and Rule
-      processing.</t>
+      <t>The following subsections specify the MAP algorithm and its use of
+      Rules.</t>
 
       <section title="Port mapping algorithm">
         <t>The port mapping algorithm is used in domains whose BMR allows IPv4
@@ -548,20 +553,26 @@ O---.--------------O          address)
 ]]></artwork>
           </figure></t>
 
-        <t>The n bits of Rule IPv6 prefix is the part of the End-user IPv6
-        prefix that is common among all CEs using the same Basic Mapping Rule
-        within the MAP domain. Similarly, the Rule IPv4 prefix of length r is
-        the IPv4 prefix common among all CEs using the same BMR within the MAP
-        domain. The combination of Rule IPv4 prefix r, with the EA bits of
-        length o, which is unique for a given CE, encodes the CE's IPv4
-        address and port set-id, if present. An EA-bit length of 0 signifies
-        that all relevant MAP IPv4 addressing information is passed directly
-        in the BMR, and not derived from the End-user IPv6 prefix.</t>
+        <t>The MAP CE's IPv4 address + port set id are determined by
+        concatenating the information in the BMR, the r bits of the Rule IPv4
+        prefix, with o bits of information, termed the EA-bits, derived from
+        the End-user IPv6 prefix that is assigned to the CE.</t>
 
-        <t>If o + r &lt; 32 (length of the IPv4 address in bits), then an IPv4
-        prefix is being represented. This case is shown in Figure 4.</t>
+        <t>The n bit Rule IPv6 prefix, expressed in the BMR, is the part of
+        the End-user IPv6 prefix that is common among all CEs using the same
+        Basic Mapping Rule within the MAP domain. Similarly, the Rule IPv4
+        prefix of length r is the IPv4 prefix common among all CEs using the
+        same BMR within the MAP domain. The combination of Rule IPv4 prefix r,
+        with the EA bits of length o, which is unique for a given CE, encodes
+        the CE's IPv4 address and port set-id, if present. An EA-bit length of
+        0 signifies that all relevant MAP IPv4 addressing information is
+        passed directly in the BMR, and not derived from the End-user IPv6
+        prefix. Examples of these and other cases are given in <xref
+        target="appendix_a"></xref>.</t>
 
-        <t></t>
+        <t>For a given BMR, if o + r &lt; 32 (length of the IPv4 address in
+        bits), then an IPv4 prefix is being intended for use by the BMR. This
+        case is shown in Figure 4.</t>
 
         <t><figure align="center" anchor="addressallocation4-fig"
             title="IPv4 prefix">
@@ -812,7 +823,7 @@ O---.--------------O          address)
       </section>
     </section>
 
-    <section title="MAP-T Packet Forwarding">
+    <section anchor="forwarding" title="MAP-T Packet Forwarding">
       <t>The end-end packet flow in MAP-T involves an IPv4 or IPv6 packet
       being forwarded across one or both of a CE and a BR, in one of two
       directions in for each such case.</t>
@@ -1026,14 +1037,17 @@ O---.--------------O          address)
       </section>
 
       <section title="Communication with IPv6 servers in the MAP-T domain">
-        <t>MAP-T allows communication between both IPv4-only and any IPv6
-        enabled devices, as well as with native IPv6-only hosts which are
-        using IPv4-mapped IPv6 address based on DMR in the MAP-T domain. Any
-        such IPv6-only servers SHOULD have both A and AAAA records in DNS
-        <xref target="RFC6219"></xref>. DNS64 <xref target="RFC6147"></xref>
-        become required only when IPv6 servers in the MAP-T domain are
-        expected themselves to initiate communication to external IPv4-only
-        hosts.</t>
+        <t>By default, MAP-T allows communication between both IPv4-only and
+        any IPv6 enabled devices, as well as with native IPv6-only servers
+        provided that the servers are configured with an IPv4-mapped IPv6
+        address using the DMR IPv6 prefix in the MAP-T domain. Such IPv6
+        servers (e.g. an HTTP server, or a web content cache device) are thus
+        able to serve both IPv6 users as well as IPv4-only users users alike
+        utilizing IPv6. Any such IPv6-only servers SHOULD have both A and AAAA
+        records in DNS <xref target="RFC6219"></xref>. DNS64 <xref
+        target="RFC6147"></xref> become required only when IPv6 servers in the
+        MAP-T domain are expected themselves to initiate communication to
+        external IPv4-only hosts.</t>
       </section>
 
       <section title="Compatibility with other NAT64 solutions">
