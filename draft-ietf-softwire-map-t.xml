@@ -36,7 +36,7 @@
 <!ENTITY rfc2473 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2473.xml">
 <!ENTITY rfc5383 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5383.xml">
 <!ENTITY rfc6877 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6877.xml">
-<!ENTITY I-D.mdt-softwire-map-dhcp-option SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.mdt-softwire-map-dhcp-option.xml">
+<!ENTITY I-D.ietf-softwire-map-dhcp SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-softwire-map-dhcp.xml">
 <!ENTITY I-D.ietf-softwire-stateless-4v6-motivation SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-softwire-stateless-4v6-motivation.xml">
 <!ENTITY I-D.ietf-softwire-map SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-softwire-map.xml">
 <!ENTITY I-D.ietf-tsvwg-iana-ports SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tsvwg-iana-ports.xml">
@@ -53,7 +53,7 @@
 <?rfc sortrefs="yes" ?>
 <?rfc comments="yes" ?>
 <?rfc inline="yes" ?>
-<rfc category="exp" docName="draft-ietf-softwire-map-t-02" ipr="trust200902">
+<rfc category="exp" docName="draft-ietf-softwire-map-t-03" ipr="trust200902">
   <front>
     <title abbrev="MAP-T">Mapping of Address and Port using Translation
     (MAP-T)</title>
@@ -181,40 +181,40 @@
       <!--
 -->
 
-      <t>Experiences from initial IPv6-only deployments indicate that
-      successful transitions to IPv6 can happen while allowing for continued
-      support of legacy IPv4 users connected at the boundaries of that IPv6
-      domain. This requires the ability to support shared IPv4 address use,
-      while using IPv6 transport and operational practices in the domain in a
-      manner that ultimately minimizes to the operator any differences between
-      IPv6 and IPv4 users connected to that domain. The use of an double NAT64
-      translation based solutions, which transform IPv4 to IPv6 traffic at
-      domain boundaries, is an optimal way to address these requirements,
-      especially in combination with stateless translation techniques that
-      seek to minimize operational challenges outlined in <xref
+      <t>Experiences from IPv6 deployments in service provider networks such
+      as <xref target="RFC6219"> </xref> indicate that a successful transition
+      to IPv6 can happen while allowing for continued support of IPv4 users,
+      without incurring the burden of an end-end dual stack network. Due to
+      IPv4 address exhaustion, this requires technology that supports shared
+      IPv4 address usage across an IPv6 network domain, while allowing the
+      network operator to realize operational practices and deploy network
+      equipment that are ideally the same for both IPv6 or IPv4 end-users. The
+      use of double NAT64 translation based solutions is an optimal way to
+      address these requirements, especially in combination with stateless
+      translation techniques that seek to minimize operational challenges
+      outlined in <xref
       target="I-D.ietf-softwire-stateless-4v6-motivation"></xref>.</t>
 
       <t>The Mapping of Address and Port - Translation (MAP-T) solution
-      specified in this document is such a double NAT64 based solution, that
-      builds on existing stateless NAT64 techniques specified in <xref
+      specified in this document is a double NAT64 based solution, that builds
+      on existing stateless NAT64 techniques specified in <xref
       target="RFC6145"></xref>, along with a stateless algorithmic address
       &amp; transport layer port mapping scheme, to allow the sharing of IPv4
       addresses across an IPv6 network. The MAP-T solution is closely related
       to MAP-E <xref target="I-D.ietf-softwire-map"></xref>, with both
-      utilizing the same address and port mapping method, but differing in
-      their choice of IPv6 domain transport, i.e. Translation <xref
-      target="RFC6145"></xref> for MAP-T and encapsulation <xref
+      utilizing the same address and port mapping &amp; indexing method, but
+      differing in their choice of IPv6 domain transport, i.e. Translation
+      <xref target="RFC6145"></xref> for MAP-T and encapsulation <xref
       target="RFC2473"></xref> for MAP-E. The translation mode is deemed
-      particularly useful for environments where the encapsulation overhead,
-      or IPv6 oriented practices (e.g. use of IPv6 only servers, or IPv6
-      traffic classification) requirements, or both of these factors,
-      contribute to an encapsulation solution being not attractive. These
-      scenarios are presented in <xref
+      valuable for environments where the encapsulation overhead, or IPv6
+      oriented practices (e.g. use of IPv6 only servers, or IPv6 traffic
+      classification) requirements, contribute to an encapsulation based
+      solution being not feasable. These scenarios are presented in <xref
       target="I-D.maglione-softwire-map-t-scenarios"></xref></t>
 
       <t>A companion document, applicable to both MAP-T and MAP-E, defines the
       DHCPv6 options for MAP provisioning <xref
-      target="I-D.mdt-softwire-map-dhcp-option"></xref>.</t>
+      target="I-D.ietf-softwire-map-dhcp"></xref>.</t>
     </section>
 
     <!--          -->
@@ -230,15 +230,23 @@
 
     <section title="Terminology">
       <t><list hangIndent="24" style="hanging">
-          <t hangText="MAP domain:">One or more MAP CEs and BRs connected to
-          the same IPv6 network sharing a common MAP Rule set. A service
-          provider may deploy a single MAP domain, or may utilize multiple MAP
-          domains.</t>
+          <t hangText="MAP domain:">One or more MAP CEs and BRs connected by
+          means of an IPv6 network and sharing a common set of MAP Rules. A
+          service provider may deploy a single MAP domain, or may utilize
+          multiple MAP domains.</t>
 
           <t hangText="MAP Rule:">A set of parameters describing the mapping
           between an IPv4 prefix, IPv4 address or shared IPv4 address and an
           IPv6 prefix or address. Each MAP domain uses a different mapping
           rule set.</t>
+
+          <t hangText="MAP Rule set">A Rule set is composed out of all thh MAP
+          Rules communicated to a device, that are intended for determining
+          traffic forwarding operations. A set has at least one entry, known
+          as a default map rule. The Rule set is interchangeably referred to
+          in this document as a Rule table.</t>
+
+          <t hangText="MAP Rule table">See MAP Rule set.</t>
 
           <t hangText="MAP node:">A device that implements MAP.</t>
 
@@ -345,14 +353,15 @@ O---.--------------O          address)
         </figure></t>
 
       <t>Each MAP-T CE is configured by means of MAP procedures with an IPv4
-      address and port-range, and is responsible for translating between a
-      given users' private IPv4 space and the CE's MAP derived IPv4 address,
-      as well as adapting traffic between IPv4 and IPv6 using NAT64 procedures
-      that are in accordance with the MAP Rules applicable for a given domain.
-      The MAP procedures can operate with CE's using a shared IPv4 address,
-      full IPv4 addresses or IPv4 prefixes, and place no assumption on the
-      IPv6 addressing, other than an IPv6 prefix of adequate size being
-      allocated.</t>
+      address and a port-range that is indexed by means of a Port Set
+      Identifier (PSID). Each CE is responsible for translating between a
+      given users' private IPv4 address space and the CE's MAP derived IPv4
+      address + port set, as well as adapting traffic between IPv4 and IPv6
+      using NAT64 procedures that are in accordance with the MAP Rules
+      applicable for a given domain. The MAP procedures can operate with CE's
+      using a shared IPv4 address, full IPv4 addresses or IPv4 prefixes, and
+      place no assumption on the IPv6 addressing, other than an IPv6 prefix of
+      adequate size being allocated.</t>
 
       <t>The MAP-T BR is responsible for connecting one or more MAP-T domains
       to external IPv4 networks, using stateless NAT64 as extended by the MAP
@@ -375,8 +384,8 @@ O---.--------------O          address)
 
     <section anchor="mapping-rules" title="Mapping Rules">
       <t>A MAP node is provisioned with one or more mapping rules that govern
-      the way an IPv4 address and port are mapped between the IPv4 and IPv6
-      domains, as well specific or default forwarding behaviour. Three
+      the IPv4 address and port-set are to a node in the IPv6 domain, as well
+      specific or default path forwarding behavior for the domain. Three
       specific types of mapping rules are defined:</t>
 
       <t><list style="numbers">
@@ -390,47 +399,56 @@ O---.--------------O          address)
               <t>Rule IPv4 prefix (including prefix length)</t>
 
               <t>Rule EA-bits length (in bits)</t>
+
+              <t>Optional Rule Port Parameters</t>
             </list></t>
 
-          <t>Forwarding Mapping Rule - used for setting up forwarding between
-          CEs in the MAP domain (a.k.a. Mesh mode). Each Forwarding Mapping
-          Rule will result in an entry in the mapping rules table for the Rule
-          IPv4 prefix + a given port range, i.e. Specific IPv4 + port
-          routes.The FMR consists of the following parameters, which are
-          shared with the BMR: <list style="symbols">
+          <t>Forwarding Mapping Rule (FMR) - used for setting up forwarding
+          between CEs in the MAP domain (a.k.a. Mesh mode). Each Forwarding
+          Mapping Rule will result in a forwarding entry for the Rule IPv4
+          prefix + the given port range, i.e. Specific IPv4 + port routes.The
+          FMR consists of the following parameters, which are shared with the
+          BMR: <list style="symbols">
               <t>Rule IPv6 prefix (including prefix length)</t>
 
               <t>Rule IPv4 prefix (including prefix length)</t>
 
               <t>Rule EA-bits length (in bits)</t>
+
+              <t>Optional Rule Port Parameters</t>
             </list></t>
 
-          <t>Default Mapping Rule - used for mapping and forwarding to
+          <t>Default Mapping Rule (DMR) - used for mapping and forwarding to
           destinations outside the MAP domain, i.e. a default route for the
           MAP domain leading to the MAP BR. It consists of:<list
               style="symbols">
-              <t>The Pv6 prefix (including length) of the</t>
+              <t>The IPv6 prefix (including prefix length) used to represent
+              destinations outside the MAP domain. Typically a routed prefix
+              to one or more BRs.</t>
+            </list></t>
 
-              <t>Rule BR IPv4 address (Optional - can be used for testing a
-              BR's reachability)</t>
+          <t>Optional Rule Port Parameters - used to represent additional
+          configuration settings. Currently defined parameters are<list
+              style="symbols">
+              <t>Offset: Specifies the numeric value for the MAP algorithm's
+              excluded port range/offset bits (A-bits). Unless explicitly
+              defined this value MUST default to 6.</t>
             </list></t>
         </list></t>
 
       <t>By default, every MAP node belonging to a MAP domain node, MUST be
-      provisioned with a Basic Mapping Rule (BMR). A MAP node finds its Basic
-      Mapping Rule by doing a longest match between the End-user IPv6 prefix
-      and the Rule IPv6 prefix in the Mapping Rules table. The rule is then
-      used for IPv4 prefix, address or shared address assignment.</t>
+      provisioned with a Basic Mapping Rule (BMR). The rule is then used for
+      IPv4 prefix, address or shared address assignment.</t>
 
       <t>A MAP IPv6 address is formed from the BMR Rule IPv6 prefix. This
       address MUST be assigned to an interface of the MAP node and is used to
       terminate all MAP traffic being sent or received to the node.</t>
 
       <t>Port-aware IPv4 entries in the Rules table are installed for all the
-      Forwarding Mapping Rules and an default route to the MAP BR as per the
-      DMR (see section Section 5). While there can be only one Default Mapping
-      Rule within a MAP domain, however there can be multiple BR's operating
-      on that rule.</t>
+      Forwarding Mapping Rules and a default route to the MAP BR as per the
+      DMR (see section Section 5.3). A given domain can have only one DMR,
+      however be deployed for load balancing using multiple BRs, for example
+      by means of anycast addressing of the BRs.</t>
 
       <t>Forwarding rules are used to allow direct communication between MAP
       CEs, known as mesh mode. In hub and spoke mode, there are no forwarding
@@ -440,9 +458,198 @@ O---.--------------O          address)
       <t>The following subsections specify the MAP algorithm and its use of
       Rules.</t>
 
+      <section anchor="bmr" title="Basic mapping rule (BMR)">
+        <t>The Basic Mapping Rule is mandatoryfor a MAP CE, and is used by the
+        CE to derive its IPv4 prefix, IPv4 address or shared IPv4 address and
+        associated port-range in conjunction with the information in the
+        end-user IPv6 prefix. Recall from Section 5 that the BMR consists of
+        the following parameters:</t>
+
+        <t><list style="symbols">
+            <t>Rule IPv6 prefix, of a length n.</t>
+
+            <t>Rule IPv4 prefix, of a length r.</t>
+
+            <t>Rule EA-bits of length o.</t>
+
+            <t>Optional Rule Port Parameters (a, k)</t>
+          </list></t>
+
+        <t><xref target="addressalloc-3"></xref> shows the structure of the
+        complete MAP IPv6 address of a CE as specified in this document, and
+        its relation to the information contained in the BMR and End-user IP6
+        prefix. The MAP CE IPv6 address is determined by concatenating the
+        End-user IPv6 prefix with the MAP subnet-id (if the End-user IPv6
+        prefix is shorter than 64 bits) and the MAP interface ID. The MAP
+        interface-id is derived as specified in <xref
+        target="interface-id"></xref>. The MAP subnet ID is defined to be the
+        first subnet (all bits set to zero). For End-user IPv6 prefixes longer
+        than 64 bits, no MAP subnet id is used.</t>
+
+        <t><figure align="center" anchor="addressalloc-3"
+            title="IPv6 address format">
+            <preamble></preamble>
+
+            <artwork align="center"><![CDATA[
+
+
+|     n bits         |  o bits   | s bits  |   128-n-o-s bits      |
++--------------------+-----------+---------+------------+----------+
+|  Rule IPv6 prefix  |  EA bits  |subnet ID|     interface ID      |
++--------------------+-----------+---------+-----------------------+
+|<---  End-user IPv6 prefix  --->|
+
+]]></artwork>
+          </figure></t>
+
+        <t>The MAP CE's IPv4 address is determined by completing the r-bits of
+        the Rule IPv4 prefix with the remaining IPv4 suffix 32-r bits of
+        information (p), along with the optional k bits of the Port Set
+        Identifier (PSID). These remaining p + k bits of information
+        themselves come from the (o) Embedded-Address (EA) bits of the
+        end-user IPv6 prefix. The End-user IPv6 prefix is the IPv6 prefix
+        assigned to the CE and is unique per CE.</t>
+
+        <t>The n bit Rule IPv6 prefix, is the part of the End-user IPv6 prefix
+        that is common among all CEs using the same Basic Mapping Rule within
+        the MAP domain. Similarly, the Rule IPv4 prefix of length r is the
+        IPv4 prefix common among all CEs using the same BMR within the MAP
+        domain. An EA-bit length of 0 signifies that all relevant p and k bits
+        of addressing information are passed directly in the BMR, and not
+        derived from the EA bits of the End-user IPv6 prefix. Examples of
+        these and other cases are given in <xref
+        target="appendix_a"></xref>.</t>
+
+        <t>For a given BMR, if o + r &lt; 32 (length of the IPv4 address in
+        bits), then an IPv4 prefix is being intended for use by the BMR. This
+        case is shown in Figure 4.</t>
+
+        <t><figure align="center" anchor="addressallocation4-fig"
+            title="IPv4 prefix">
+            <preamble></preamble>
+
+            <artwork align="center"><![CDATA[
+
+|   r bits    |     32-r bits       |
++-------------+---------------------+
+|  Rule IPv4  | IPv4 Address suffix |
++-------------+---------------------+
+|           < 32 bits               |
+]]></artwork>
+          </figure></t>
+
+        <t>If o + r is equal to 32, then a full IPv4 address is to be
+        assigned. The address is created by concatenating the Rule IPv4 prefix
+        and the EA-bits. This case is shown in Figure 5.</t>
+
+        <t><figure align="center" anchor="addressallocation5-fig"
+            title="Complete IPv4 address">
+            <preamble></preamble>
+
+            <artwork align="center"><![CDATA[
+
+|   r bits    |     32-r bits       |        
++-------------+---------------------+         
+|  Rule IPv4  | IPv4 Address suffix |        
++-------------+---------------------+        
+|            32 bits                |
+
+]]></artwork>
+          </figure>If o + r is &gt; 32, then a shared IPv4 address is to be
+        assigned. The number of IPv4 address suffix bits (p) in the EA bits is
+        given by 32 - r. The PSID bits are used to create a port-set. The
+        length of the PSID bit field within EA bits is: k = o - 32 + r.</t>
+
+        <t><figure align="center" anchor="addressallocation6"
+            title="Shared IPv4 address">
+            <preamble></preamble>
+
+            <artwork align="center"><![CDATA[
+
+|   r bits    |     32-r bits       |         |   k bits   |
++-------------+---------------------+         +------------+
+|  Rule IPv4  | IPv4 Address suffix |         |Port-Set ID |
++-------------+---------------------+         +------------+
+|            32 bits                |
+
+]]></artwork>
+          </figure></t>
+
+        <t>It should be noted that the length r MAY be zero, in which case the
+        complete IPv4 address or prefix is encoded in the EA bits. Similarly
+        the length of o MAY, in which case no part of the CE's IPv6 end-user
+        prefix is used to derive the CE's IPv4 address. To create a complete
+        IPv4 address (or prefix), the IPv4 address suffix (p = 32-r) from the
+        EA bits, is concatenated with the Rule IPv4 prefix (r bits).</t>
+
+        <t>The BMR is provisioned to the CE by means (e.g. a DHCPv6 option)
+        not specified in this document.</t>
+
+        <t>See <xref target="appendix_a"></xref> for an example of the Basic
+        Mapping Rule.</t>
+      </section>
+
+      <section anchor="fmr" title="Forwarding mapping rule (FMR)">
+        <t>The Forwarding Mapping Rule is an optional rule used in mesh mode
+        to enable direct CE to CE connectivity.</t>
+
+        <t>The processing of an FMR rule results in a route entry being
+        installed on the processing MAP device for the IPv4 Rule prefix and
+        any associated port range. The "next hop" of such a route is the MAP
+        transformation defined by the rule's key elements:</t>
+
+        <t><list style="symbols">
+            <t>The Rule IPv6 prefix, of a length n.</t>
+
+            <t>The Rule IPv4 prefix, of a length r.</t>
+
+            <t>The Rule EA-bits of length o.</t>
+
+            <t>Optional Rule Port Parameters (a, k)</t>
+          </list></t>
+
+        <t>On forwarding an IPv4 packet, a best matching prefix look up is
+        done and the closest matching FMR is chosen. The IPv6 destination
+        address is derived from the destination IPv4 + port in combination
+        with the rule's parameters as exemplified in <xref
+        target="aplusptoipv6-fig"></xref>.</t>
+
+        <t><figure align="left" anchor="aplusptoipv6-fig"
+            title="Deriving of MAP IPv6 address">
+            <preamble></preamble>
+
+            <artwork align="left"><![CDATA[
+
+|        32 bits           |         |    16 bits        |
++--------------------------+         +-------------------+
+| IPv4 destination address |         |  IPv4 dest port   |
++--------------------------+         +-------------------+
+                :          :           ___/       :
+|    r bits     |32-r bits |          /  k bits   :
++---------------+----------+         +------------+ 
+|   Rule IPv4   |IPv4  sufx|         |Port-Set ID |
++---------------+----------+         +------------+
+                \          /    ____/    ________/
+                  \       :  __/   _____/                 
+                    \     : /     /
+|     n bits         |  o bits   | s bits  |   128-n-o-s bits      |
++--------------------+-----------+---------+------------+----------+
+|  Rule IPv6 prefix  |  EA bits  |subnet ID|     interface ID      |
++--------------------+-----------+---------+-----------------------+
+|<---  End-user IPv6 prefix  --->|
+
+]]></artwork>
+          </figure></t>
+
+        <t>See <xref target="appendix_a"></xref> for an example of the
+        Forwarding Mapping Rule.</t>
+      </section>
+
       <section title="Port mapping algorithm">
-        <t>The port mapping algorithm is used in domains whose BMR allows IPv4
-        address sharing.</t>
+        <t>The port mapping algorithm is used in domains whose MAP Rules
+        allows IPv4 address sharing, and is intended to allow the a range of
+        ports to be represented by an algorithmically computable index, the
+        Port Set Identifier (PSID) that is unique for each CE.</t>
 
         <t>The simplest way to represent a port range is using a notation
         similar to CIDR <xref target="RFC4632"></xref>. For example the first
@@ -454,16 +661,17 @@ O---.--------------O          address)
         PSIDs 0 to 3 in the example just given).</t>
 
         <t>As will be seen shortly, the PSID forms a portion of the End-user
-        IPv6 prefix. To minimise dependencies between the End-user IPv6 prefix
-        and the assigned port set, it is desirable to minimize the
-        restrictions on the possible PSID values. This is achieved by using an
-        infix representation of the port value. Using such a representation,
-        the well-known ports are excluded by restrictions on the value of the
-        first bit field (A) rather than the PSID.</t>
-
-        <t>The infix algorithm allocates ports to a given CE as a series of
-        contiguous ranges spaced at regular intervals throughout the complete
-        range of possible port set values.</t>
+        IPv6 prefix, however it is desirable to minimize the dependencies
+        between the End-user IPv6 prefix and the assigned port set. This is
+        achieved by using an infix representation of the port value. Using
+        such a representation, the well-known ports are excluded by
+        restrictions on the value of the first A high-order bits of the
+        transport port space, known as the A-bit field, rather than the PSID
+        itself, whihc directly follows. For a given A-bit field value, and a
+        given PSID, the range of contiguous ports being represented are all
+        the combinations of the remaining m wildcard bits (i.e. 2^m
+        combinations) out of the 16-bit field, as shown in the figure
+        below.</t>
 
         <t><figure align="left" anchor="psid-fig" title="PSID">
             <preamble></preamble>
@@ -512,187 +720,6 @@ O---.--------------O          address)
           </list></t>
       </section>
 
-      <section anchor="bmr" title="Basic mapping rule (BMR)">
-        <t>The Basic Mapping Rule is mandatory, and is used by the CE to
-        derive its IPv4 prefix, IPv4 address or shared IPv4 address and
-        associated port-range in conjunction with the information in the
-        end-user IPv6 prefix. Recall from Section 5 that the BMR consists of
-        the following parameters:</t>
-
-        <t><list style="symbols">
-            <t>Rule IPv6 prefix, of a length n.</t>
-
-            <t>Rule IPv4 prefix, of a length r.</t>
-
-            <t>Rule EA-bits of length o.</t>
-          </list></t>
-
-        <t>Figure 3 shows the structure of the complete MAP IPv6 address of a
-        CE as specified in this document, and its relation to the information
-        contained in the BMR and End-user IP6 prefix. A MAP CE IPv6 address is
-        created by concatenating the End-user IPv6 prefix with the MAP
-        subnet-id (if the End-user IPv6 prefix is shorter than 64 bits) and
-        the interface ID as specified in <xref target="interface-id"></xref>.
-        The MAP subnet ID is defined to be the first subnet (all bits set to
-        zero). For End-user IPv6 prefixes longer than 64 bits, no subnet id is
-        used.</t>
-
-        <t><figure align="center" anchor="addressalloc-3"
-            title="IPv6 address format">
-            <preamble></preamble>
-
-            <artwork align="center"><![CDATA[
-
-
-|     n bits         |  o bits   | s bits  |   128-n-o-s bits      |
-+--------------------+-----------+---------+------------+----------+
-|  Rule IPv6 prefix  |  EA bits  |subnet ID|     interface ID      |
-+--------------------+-----------+---------+-----------------------+
-|<---  End-user IPv6 prefix  --->|
-
-]]></artwork>
-          </figure></t>
-
-        <t>The MAP CE's IPv4 address + port set id are determined by
-        concatenating the information in the BMR, the r bits of the Rule IPv4
-        prefix, with o bits of information, termed the EA-bits, derived from
-        the End-user IPv6 prefix that is assigned to the CE.</t>
-
-        <t>The n bit Rule IPv6 prefix, expressed in the BMR, is the part of
-        the End-user IPv6 prefix that is common among all CEs using the same
-        Basic Mapping Rule within the MAP domain. Similarly, the Rule IPv4
-        prefix of length r is the IPv4 prefix common among all CEs using the
-        same BMR within the MAP domain. The combination of Rule IPv4 prefix r,
-        with the EA bits of length o, which is unique for a given CE, encodes
-        the CE's IPv4 address and port set-id, if present. An EA-bit length of
-        0 signifies that all relevant MAP IPv4 addressing information is
-        passed directly in the BMR, and not derived from the End-user IPv6
-        prefix. Examples of these and other cases are given in <xref
-        target="appendix_a"></xref>.</t>
-
-        <t>For a given BMR, if o + r &lt; 32 (length of the IPv4 address in
-        bits), then an IPv4 prefix is being intended for use by the BMR. This
-        case is shown in Figure 4.</t>
-
-        <t><figure align="center" anchor="addressallocation4-fig"
-            title="IPv4 prefix">
-            <preamble></preamble>
-
-            <artwork align="center"><![CDATA[
-
-|   r bits    |        p bits       |
-+-------------+---------------------+
-|  Rule IPv4  | IPv4 Address suffix |
-+-------------+---------------------+
-|           < 32 bits               |
-]]></artwork>
-          </figure></t>
-
-        <t>If o + r is equal to 32, then a full IPv4 address is to be
-        assigned. The address is created by concatenating the Rule IPv4 prefix
-        and the EA-bits. This case is shown in Figure 5.</t>
-
-        <t><figure align="center" anchor="addressallocation5-fig"
-            title="Complete IPv4 address">
-            <preamble></preamble>
-
-            <artwork align="center"><![CDATA[
-
-|   r bits    |        p bits       |        
-+-------------+---------------------+         
-|  Rule IPv4  | IPv4 Address suffix |        
-+-------------+---------------------+        
-|            32 bits                |
-
-]]></artwork>
-          </figure>If o + r is &gt; 32, then a shared IPv4 address is to be
-        assigned. The number of IPv4 address suffix bits (p) in the EA bits is
-        given by 32 - r bits. The PSID bits are used to create a port-set. The
-        length of the PSID bit field within EA bits is: q = o - p.</t>
-
-        <t><figure align="center" anchor="addressallocation6"
-            title="Shared IPv4 address">
-            <preamble></preamble>
-
-            <artwork align="center"><![CDATA[
-
-|   r bits    |        p bits       |         |   q bits   |
-+-------------+---------------------+         +------------+
-|  Rule IPv4  | IPv4 Address suffix |         |Port-Set ID |
-+-------------+---------------------+         +------------+
-|            32 bits                |
-
-]]></artwork>
-          </figure></t>
-
-        <t>It should be noted that the length r MAY be zero, in which case the
-        complete IPv4 address or prefix is encoded in the EA bits. Similarly
-        the length of o MAY, in which case no part of the CE's IPv6 end-user
-        prefix is used to derive the CE's IPv4 address. To create a complete
-        IPv4 address (or prefix), the IPv4 address suffix (p) from the EA
-        bits, is concatenated with the Rule IPv4 prefix (r bits).</t>
-
-        <t>The BMR is provisioned to the CE by means (e.g. a DHCPv6 option)
-        not specified in this document.</t>
-
-        <t>See <xref target="appendix_a"></xref> for an example of the Basic
-        Mapping Rule.</t>
-      </section>
-
-      <section anchor="fmr" title="Forwarding mapping rule (FMR)">
-        <t>The Forwarding Mapping Rule is an optional rule used in mesh mode
-        to enable direct CE to CE connectivity.</t>
-
-        <t>The processing of an FMR rule results in a route entry being
-        installed in a rules table on the processing MAP device for the IPv4
-        Rule prefix and any associated port range. The "next hop" of such a
-        route is the MAP transformation defined by the rule's key
-        elements:</t>
-
-        <t><list style="symbols">
-            <t>The Rule IPv6 prefix, of a length n.</t>
-
-            <t>The Rule IPv4 prefix, of a length r.</t>
-
-            <t>The Rule EA-bits of length o.</t>
-          </list></t>
-
-        <t>On forwarding an IPv4 packet, a best matching prefix look up is
-        done in the rules table and the correct FMR is chosen. The IPv6
-        destination address is derived from the destination IPv4 + port in
-        combination with the rule's parameters as exemplified in Figure 7.</t>
-
-        <t><figure align="left" anchor="aplusptoipv6-fig"
-            title="Deriving of MAP IPv6 address">
-            <preamble></preamble>
-
-            <artwork align="left"><![CDATA[
-
-|        32 bits           |         |    16 bits        |
-+--------------------------+         +-------------------+
-| IPv4 destination address |         |  IPv4 dest port   |
-+--------------------------+         +-------------------+
-                :          :           ___/       :
-                | p bits   |          /  q bits   :
-                +----------+         +------------+ 
-                |IPv4  sufx|         |Port-Set ID |
-                +----------+         +------------+
-                \          /    ____/    ________/
-                  \       :  __/   _____/                 
-                    \     : /     /
-|     n bits         |  o bits   | s bits  |   128-n-o-s bits      |
-+--------------------+-----------+---------+------------+----------+
-|  Rule IPv6 prefix  |  EA bits  |subnet ID|     interface ID      |
-+--------------------+-----------+---------+-----------------------+
-|<---  End-user IPv6 prefix  --->|
-
-]]></artwork>
-          </figure></t>
-
-        <t>See <xref target="appendix_a"></xref> for an example of the
-        Forwarding Mapping Rule.</t>
-      </section>
-
       <section anchor="dmr" title="Default mapping rule (DMR)">
         <t>IPv4 traffic between MAP-T nodes that are all within one MAP domain
         is translated to IPv6, with the senders MAP IPv6 address as the IPv6
@@ -737,9 +764,9 @@ O---.--------------O          address)
           </figure></t>
 
         <t>In the case of an IPv4 prefix, the IPv4 address field is
-        right-padded with zeros up to 32 bits. The PSID field is left-padded
-        to create a 16 bit field. For an IPv4 prefix or a complete IPv4
-        address, the PSID field is zero.</t>
+        right-padded with zeros up to 32 bits. The k-bit PSID is zero
+        left-padded to create a 16 bit field. For an IPv4 prefix or a complete
+        IPv4 address, the PSID field is zero.</t>
 
         <t>If the End-user IPv6 prefix length is larger than 64, the most
         significant parts of the interface identifier is overwritten by the
@@ -782,8 +809,8 @@ O---.--------------O          address)
         configuration by an administrator. This document does not prescribe
         any of these methods, but recommends that a MAP CE SHOULD implement
         DHCPv6 options as per <xref
-        target="I-D.mdt-softwire-map-dhcp-option"></xref>. Other configuration
-        and management methods may use the format described by this option for
+        target="I-D.ietf-softwire-map-dhcp"></xref>. Other configuration and
+        management methods may use the format described by this option for
         consistency and convenience of implementation on CEs that support
         multiple configuration methods.</t>
 
@@ -805,7 +832,7 @@ O---.--------------O          address)
         assigned by DHCPv6. Each domain a given CE operates within would
         require its own set of MAP configuration elements and would generate
         its own IPv4 address. The MAP DHCPv6 option is specified in <xref
-        target="I-D.mdt-softwire-map-dhcp-option"></xref></t>
+        target="I-D.ietf-softwire-map-dhcp"></xref></t>
       </section>
 
       <section title="MAP BR">
@@ -830,10 +857,11 @@ O---.--------------O          address)
 
       <section title="IPv4 to IPv6 at the CE">
         <t>A MAP-T CE receiving IPv4 packets SHOULD perform NAPT NAT44
-        function, and create any necessary NAT44 bindings. The NAT'ed IPv4
-        packet's source address and port MUST correspond to the source IPv4
-        address and source transport port number computed to belong to the CE
-        by means of the MAP Basic Mapping Rule (BMR).</t>
+        function, and create any necessary NAPT44 bindings. The source address
+        and port of the packet obtained as a result of the NAPT44 process MUST
+        correspond to the source IPv4 address and source transport port number
+        derived to belong to the CE by means of the MAP Basic Mapping Rule
+        (BMR).</t>
 
         <t>The resulting IPv4 packet is subject to a longest IPv4 address +
         port match MAP rule selection, which then determines the parameters
@@ -924,8 +952,8 @@ O---.--------------O          address)
     </section>
 
     <section title="ICMP Handling">
-      <t>ICMP messages supported in the MAP-T domain needs to take into
-      consideration also the NAPT component and best current practice
+      <t>ICMP messages supported in the MAP-T domain need to take into
+      consideration also the NAPT44 component and best current practice
       documented in <xref target="RFC5508"></xref> along with some additional
       specific considerations.</t>
 
@@ -940,26 +968,16 @@ O---.--------------O          address)
       sending IPv4 host.</t>
 
       <t>When receiving IPv4 ICMP messages, the MAP-T CE MUST rewrite the ID
-      field to a port value derived from the Port-set-id. A BR MUST translate
-      the resulting ICMPv6 packets back to ICMP preserving the ID field on its
-      way to an IPv4 destination.</t>
+      field to a port value derived from the CE's Port-set-id. </t>
 
-      <t>In the return path, when MAP-T BR receives an ICMP packet containing
-      an ID field which is bound for a shared address in the MAP-T domain, the
-      MAP-T BR SHOULD use the ID value as a substitute for the destination
-      port in determining the IPv6 destination address. In all other cases,
-      the MAP-T BR MUST derive the destination IPv6 address by simply mapping
-      the destination IPv4 address without additional port info.</t>
-
-      <t>If a MAP BR receives an ICMP error message on its IPv4 interface, the
-      MAP BR should translate the ICMP message to an appropriate ICMPv6
-      message, as per [RFC6145] and forward it to the intended MAP CE with the
-      following considerations. If IPv4 address is not shared, the MAP BR
-      generates a CE IPv6 address from the IPv4 destination address in the
-      ICMP error message and encapsulates the ICMP message in IPv6. If the
-      IPv4 address is shared, the MAP BR derives an original IPv4 packet from
-      the ICMP payload and generates a CE IPv6 address from the source address
-      and the source port in the original IPv4 packet.</t>
+      <t>In the return path, when MAP-T BR receives an IPv4 ICMP packet
+      containing an ID field which is bound for a shared address in the MAP-T
+      domain, the MAP-T BR SHOULD use the ID value as a substitute for the
+      destination port in determining the IPv6 destination address. In all
+      other cases, the MAP-T BR MUST derive the destination IPv6 address by
+      simply mapping the destination IPv4 address without additional port
+      info. Throughout the ICMP message MUST be translated as per [RFC6145]
+      with the the ID field preserved.</t>
     </section>
 
     <section title="Fragmentation and Path MTU Discovery">
@@ -1008,15 +1026,16 @@ O---.--------------O          address)
     </section>
 
     <section title="Usage Considerations">
-      <section title="EA-bit length set to 0">
+      <section title="EA-bit length of 0">
         <t>The MAP solution supports use and configuration of domains with a
-        BMR having an EA-bit length is set to 0. This results in independence
+        BMR expressing an EA-bit length of 0. This results in independence
         between the end-user IPv6 prefix assigned to the CE and the IPv4
-        address and/or port-range used by MAP.</t>
+        address and/or port-range used by MAP. The k-bits of PSID information
+        may in this case be derived from the BMR.</t>
 
         <t>The constraint imposed is that each such MAP domain be composed of
-        just 1 MAP CE which has a predetermined IPv6 prefix, i.e. The BR would
-        be configured with a rule-set per CPE, where the FMR would uniquely
+        just 1 MAP CE which has a predetermined IPv6 prefix. The BR would be
+        configured with an FRM rule per CPE, where the FMR would uniquely
         describe the IPv6 prefix of a given CE. Each CE would have a distinct
         BMR, that would fully describe that CE's IPv4 address, and PSID if
         any.</t>
@@ -1027,31 +1046,30 @@ O---.--------------O          address)
       <section title="Mesh and Hub and spoke modes">
         <t>The hub and spoke mode of communication, whereby all traffic sent
         by a MAP-T CE is forwarded via a BR, and the mesh mode, whereby a CE
-        is directly able to forward traffic to another CE in the same MAP-T
-        domain, are governed by the activation of a Basic Mapping Rule as a
-        Forward Mapping Rule, and/or the configuration of additional FMRs. By
-        default, a MAP CE will interpret its BMR only to configure its IPv4
-        parameters and IPv6 MAP address. The enable mesh-mode in a domain, an
-        FMR containing the equivalent information of the domain's BMR needs to
-        be created and used to configure the CEs.</t>
+        is directly able to forward traffic to another CE, are governed by the
+        activation of Forward Mapping Rule that cover the IPv4-prefix
+        destination, and port-index range. By default, a MAP CE configured
+        only with a BMR, as per this specification, will use it to configure
+        its IPv4 parameters and IPv6 MAP address without enabling mesh mode.
+        </t>
       </section>
 
       <section title="Communication with IPv6 servers in the MAP-T domain">
         <t>By default, MAP-T allows communication between both IPv4-only and
         any IPv6 enabled devices, as well as with native IPv6-only servers
         provided that the servers are configured with an IPv4-mapped IPv6
-        address using the DMR IPv6 prefix in the MAP-T domain. Such IPv6
-        servers (e.g. an HTTP server, or a web content cache device) are thus
-        able to serve both IPv6 users as well as IPv4-only users users alike
-        utilizing IPv6. Any such IPv6-only servers SHOULD have both A and AAAA
-        records in DNS <xref target="RFC6219"></xref>. DNS64 <xref
+        address. This address could be part of the the IPv6 prefix used by the
+        DMR in the MAP-T domain. Such IPv6 servers (e.g. an HTTP server, or a
+        web content cache device) are thus able to serve both IPv6 users as
+        well as IPv4-only users users alike utilizing IPv6. Any such IPv6-only
+        servers SHOULD have both A and AAAA records in DNS. DNS64 <xref
         target="RFC6147"></xref> become required only when IPv6 servers in the
         MAP-T domain are expected themselves to initiate communication to
         external IPv4-only hosts.</t>
       </section>
 
       <section title="Compatibility with other NAT64 solutions">
-        <t>A MAP-T CE, is by default compatible with <xref
+        <t>A MAP-T CE is by default compatible with <xref
         target="RFC6146"></xref> stateful NAT64 devices that are placed to
         use/advertise the BR prefix. This in effect allows the use of MAP-T
         CEs in environments that need to perform statistical multiplexing of
@@ -1110,6 +1128,15 @@ O---.--------------O          address)
           to handle DNS traffic, and source such traffic from IPv6 interfaces
           not assigned to MAP-T. Practicalities of these methods are discussed
           in Section 5.9 of <xref target="I-D.dec-stateless-4v6"></xref>.</t>
+
+          <t hangText="ICMP Flood">Given the necessity to process and
+          translate ICMP and ICMPv6 messages by the BR and CE nodes, a
+          foreseeable attack vector is that of a flood of such messages
+          leading to a saturation of the nodes' compute resources. This attack
+          vector is not specific to MAP, and its mitigation lies a combination
+          of policing the rate of ICMP messages, policing the rate at which
+          such messages can get processed by the MAP nodes, and of course
+          identifying and blocking off the source(s) of such traffic.</t>
         </list></t>
 
       <t><xref target="RFC6269"></xref> outlines general issues with IPv4
@@ -1157,7 +1184,8 @@ O---.--------------O          address)
       <t>The authors would like to thank Mohamed Boucadair, Guillaume Gottard,
       Dan Wing, Jan Zorz, Necj Scoberne, Tina Tsou, , Gang Chen, Maoke Chen,
       Xiaohong Deng, Jouni Korhonen, Tomasz Mrugalski, Jacni Qin, Chunfa Sun,
-      Qiong Sun, and Leaf Yeh for their review and comments.</t>
+      Qiong Sun, Leaf Yeh, Andrew Yourtchenko for their review and
+      comments.</t>
     </section>
   </middle>
 
@@ -1221,7 +1249,7 @@ O---.--------------O          address)
 
       &I-D.ietf-softwire-map;
 
-      &I-D.mdt-softwire-map-dhcp-option;
+      &I-D.ietf-softwire-map-dhcp;
 
       &I-D.ietf-tsvwg-iana-ports;
 
