@@ -522,7 +522,7 @@ O---.--------------O          address)
 
         <t>For a given BMR, if o + r &lt; 32 (length of the IPv4 address in
         bits), then an IPv4 prefix is being intended for use by the BMR. This
-        case is shown in Figure 4.</t>
+        case is shown in <xref target="addressallocation4-fig"></xref>.</t>
 
         <t><figure align="center" anchor="addressallocation4-fig"
             title="IPv4 prefix">
@@ -540,7 +540,8 @@ O---.--------------O          address)
 
         <t>If o + r is equal to 32, then a full IPv4 address is to be
         assigned. The address is created by concatenating the Rule IPv4 prefix
-        and the EA-bits. This case is shown in Figure 5.</t>
+        and the EA-bits. This case is shown in <xref
+        target="addressallocation5-fig"></xref>.</t>
 
         <t><figure align="center" anchor="addressallocation5-fig"
             title="Complete IPv4 address">
@@ -556,9 +557,11 @@ O---.--------------O          address)
 
 ]]></artwork>
           </figure>If o + r is &gt; 32, then a shared IPv4 address is to be
-        assigned. The number of IPv4 address suffix bits (p) in the EA bits is
-        given by 32 - r. The PSID bits are used to create a port-set. The
-        length of the PSID bit field within EA bits is: k = o - 32 + r.</t>
+        assigned, and is the case shown in <xref
+        target="addressallocation6"></xref>. The number of IPv4 address suffix
+        bits (p) in the EA bits is given by 32 - r. The PSID bits are used to
+        create a port-set. The length of the PSID bit field within EA bits is:
+        k = o - 32 + r.</t>
 
         <t><figure align="center" anchor="addressallocation6"
             title="Shared IPv4 address">
