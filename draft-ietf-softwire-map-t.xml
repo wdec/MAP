@@ -240,13 +240,13 @@
           IPv6 prefix or address. Each MAP domain uses a different mapping
           rule set.</t>
 
-          <t hangText="MAP Rule set">A Rule set is composed out of all thh MAP
-          Rules communicated to a device, that are intended for determining
-          traffic forwarding operations. A set has at least one entry, known
-          as a default map rule. The Rule set is interchangeably referred to
-          in this document as a Rule table.</t>
+          <t hangText="MAP Rule set:">A Rule set is composed out of all the
+          MAP Rules communicated to a device, that are intended for
+          determining the devices' traffic forwarding operations. A set has at
+          least one entry, known as a default map rule. The Rule set is
+          interchangeably referred to in this document as a Rule table.</t>
 
-          <t hangText="MAP Rule table">See MAP Rule set.</t>
+          <t hangText="MAP Rule table:">See MAP Rule set.</t>
 
           <t hangText="MAP node:">A device that implements MAP.</t>
 
@@ -459,11 +459,10 @@ O---.--------------O          address)
       Rules.</t>
 
       <section anchor="bmr" title="Basic mapping rule (BMR)">
-        <t>The Basic Mapping Rule is mandatoryfor a MAP CE, and is used by the
-        CE to derive its IPv4 prefix, IPv4 address or shared IPv4 address and
-        associated port-range in conjunction with the information in the
-        end-user IPv6 prefix. Recall from Section 5 that the BMR consists of
-        the following parameters:</t>
+        <t>The Basic Mapping Rule is used to derive a CE's IPv4 prefix, IPv4
+        address and any associated port-set-id, which are related to the MAP
+        domain represented by an IPv6 prefix. Recall from Section 5 that the
+        BMR consists of the following parameters:</t>
 
         <t><list style="symbols">
             <t>Rule IPv6 prefix, of a length n.</t>
@@ -971,7 +970,7 @@ O---.--------------O          address)
       sending IPv4 host.</t>
 
       <t>When receiving IPv4 ICMP messages, the MAP-T CE MUST rewrite the ID
-      field to a port value derived from the CE's Port-set-id. </t>
+      field to a port value derived from the CE's Port-set-id.</t>
 
       <t>In the return path, when MAP-T BR receives an IPv4 ICMP packet
       containing an ID field which is bound for a shared address in the MAP-T
@@ -1053,8 +1052,8 @@ O---.--------------O          address)
         activation of Forward Mapping Rule that cover the IPv4-prefix
         destination, and port-index range. By default, a MAP CE configured
         only with a BMR, as per this specification, will use it to configure
-        its IPv4 parameters and IPv6 MAP address without enabling mesh mode.
-        </t>
+        its IPv4 parameters and IPv6 MAP address without enabling mesh
+        mode.</t>
       </section>
 
       <section title="Communication with IPv6 servers in the MAP-T domain">
