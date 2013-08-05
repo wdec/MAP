@@ -710,7 +710,7 @@ O---.--------------O          address)
             Identifiers (PSID) MUST have non-overlapping port-sets.</t>
 
             <t hangText="k-bits">The length in bits of the PSID field. The
-            sharing ratio is k^2. The number of ports assigned to the user is
+            sharing ratio is 2^k. The number of ports assigned to the user is
             2^(16-k) - 2^m (excluded ports)</t>
 
             <t hangText="M">Selects the specific port within the particular
@@ -1303,7 +1303,7 @@ O---.--------------O          address)
 
           <artwork align="left"><![CDATA[
 
-   Another example can be made of a hypothetical MAP-T BR,
+   Another example can be made of a MAP-T BR,
    configured with the following FMR when receiving a packet
    with the following characteristics:
 

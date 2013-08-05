@@ -508,7 +508,7 @@ O---.--------------O
           port-sets.</t>
 
           <t hangText="k-bits">The length in bits of the PSID
-          field. The sharing ratio is k^2. The number of ports
+          field. The sharing ratio is 2^k. The number of ports
           assigned to the user is 2^(16-k) - 2^m (excluded ports)</t>
 
           <t hangText="M">Selects the specific port within the
@@ -634,7 +634,7 @@ O---.--------------O
         <t>If o + r is &gt; 32, then a shared IPv4 address is to be assigned.
         The number of IPv4 address suffix bits (32-r) in the EA bits is given by
         32 - r bits. The PSID bits are used to create a port-set. The length
-        of the PSID bit field within EA bits is: q = o - p.</t>
+        of the PSID bit field within EA bits is: k = o - p.</t>
 
          <t><figure align="center" anchor="addressallocation2-fig"
             title="Shared IPv4 address">
@@ -642,7 +642,7 @@ O---.--------------O
 
             <artwork align="center"><![CDATA[
 
-|   r bits    |     32-r bits       |         |   q bits   |
+|   r bits    |     32-r bits       |         |   k bits   |
 +-------------+---------------------+         +------------+
 |  Rule IPv4  | IPv4 Address suffix |         |Port-Set ID |
 +-------------+---------------------+         +------------+
@@ -683,7 +683,7 @@ O---.--------------O
 | IPv4 destination address |         |  IPv4 dest port   |
 +--------------------------+         +-------------------+
                 :          :           ___/       :
-                | 32-r bits|          /  q bits   :
+                | 32-r bits|          /  k bits   :
                 +----------+         +------------+ 
                 |IPv4  sufx|         |Port-Set ID |
                 +----------+         +------------+
