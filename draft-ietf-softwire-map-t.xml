@@ -53,7 +53,7 @@
 <?rfc sortrefs="yes" ?>
 <?rfc comments="yes" ?>
 <?rfc inline="yes" ?>
-<rfc category="exp" docName="draft-ietf-softwire-map-t-03" ipr="trust200902">
+<rfc category="exp" docName="draft-ietf-softwire-map-t-04" ipr="trust200902">
   <front>
     <title abbrev="MAP-T">Mapping of Address and Port using Translation
     (MAP-T)</title>
@@ -168,9 +168,9 @@
 
     <abstract>
       <t>This document specifies the &ldquo;Mapping of Address and Port&rdquo;
-      double stateless NAT64 translation based solution (MAP-T) for providing
-      shared or uniquely addressed IPv4 device connectivity to and across an
-      IPv6 domain.</t>
+      double stateless IPv6-IPv4 Network Address Translation (NAT64) based
+      solution, called MAP-T, for providing shared or non-shared IPv4 address
+      connectivity to and across an IPv6 network.</t>
     </abstract>
   </front>
 
@@ -184,15 +184,14 @@
       <t>Experiences from IPv6 deployments in service provider networks such
       as <xref target="RFC6219"> </xref> indicate that a successful transition
       to IPv6 can happen while allowing for continued support of IPv4 users,
-      without incurring the burden of an end-end dual stack network. Due to
-      IPv4 address exhaustion, this requires technology that supports shared
-      IPv4 address usage across an IPv6 network domain, while allowing the
-      network operator to realize operational practices and deploy network
-      equipment that are ideally the same for both IPv6 or IPv4 end-users. The
-      use of double NAT64 translation based solutions is an optimal way to
-      address these requirements, especially in combination with stateless
-      translation techniques that seek to minimize operational challenges
-      outlined in <xref
+      without the use of an full end-end dual stack network. Due to IPv4
+      address exhaustion, this requires an IPv6 network technology that
+      supports shared IPv4 address usage, and also allows the network operator
+      to optimize network equipment functionality and operational practices
+      around IPv6. The use of double NAT64 translation based solutions is an
+      optimal way to address these requirements, especially in combination
+      with stateless translation techniques that minimize several operational
+      challenges, as outlined in <xref
       target="I-D.ietf-softwire-stateless-4v6-motivation"></xref>.</t>
 
       <t>The Mapping of Address and Port - Translation (MAP-T) solution
@@ -607,7 +606,7 @@ O---.--------------O          address)
 
             <t>The Rule EA-bits of length o.</t>
 
-            <t>Optional Rule Port Parameters (a, k)</t>
+            <t>Optional Rule Port Parameters (e.g. offset, port set id)</t>
           </list></t>
 
         <t>On forwarding an IPv4 packet, a best matching prefix look up is
@@ -659,8 +658,7 @@ O---.--------------O          address)
         255.0/8. In hexadecimal, 0x0000/8 (PSID = 0) and 0xFF00/8 (PSID =
         0xFF). Using this technique, but wishing to avoid allocating the
         system ports <xref target="I-D.ietf-tsvwg-iana-ports"></xref> to a
-        give CE, one would have to exclude the use of one or more PSIDs (e.g.,
-        PSIDs 0 to 3 in the example just given).</t>
+        give CE, one would have to exclude the use of one or more PSIDs.</t>
 
         <t>As will be seen shortly, the PSID forms a portion of the End-user
         IPv6 prefix, however it is desirable to minimize the dependencies
